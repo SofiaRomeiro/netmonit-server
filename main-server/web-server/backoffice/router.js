@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 const axios = require('axios');
 const pool = require("../db");
@@ -79,7 +81,7 @@ router.get(`/delete-raspberries`, async(req, res) => {
 router.get(`/update-dest-ping/:new_dest_ping`, async(req, res) => {
     //const new_dest_ping = "10.0.2.15"
     const new_dest_ping = req.params.new_dest_ping
-    const url = `http://0.0.0.0:8082/monitor/change-dest-ip/${new_dest_ping}`
+    const url = `http://${process.env.PROBE_IP}:${process.env.PROBE_PORT}/monitor/change-dest-ip/${new_dest_ping}`
     var pi_res
     try {
         pi_res = await axios.put(url)
@@ -90,9 +92,11 @@ router.get(`/update-dest-ping/:new_dest_ping`, async(req, res) => {
     res.sendStatus(pi_res.status)
 })
 
-router.get(`/events/update`, async(req, res) => {
-    //const new_dest_ping = "10.0.2.15"
-    const url = `http://0.0.0.0:8082/monitor/ping/`
+router.get(`/events/update/:id`, async(req, res) => {
+    const id_pi = req.params.id
+    const ip = await pool.query("SELECT ip FROM raspberry \
+        WHERE id_pi=(%s)", [id_pi]);
+    const url = `http://${ip}:${process.env.PROBE_PORT}/monitor/ping/`
     var pi_res
     try {
         pi_res = await axios.get(url)

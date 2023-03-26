@@ -10,6 +10,7 @@ const util = require('util');
 app.use(cors());
 app.use(express.json());
 app.use(cors({origin: '*'}));
+app.use(express.static('../webapp/build'));
 
 app.get(`/${version}/facts`, async (req, res) => {
     try {

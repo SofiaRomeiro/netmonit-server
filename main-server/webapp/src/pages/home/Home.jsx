@@ -64,10 +64,10 @@ const Home = () => {
         }
     };
 
-    const updateEvents = async (ip) => {
+    const updateEvents = async (id) => {
         try {
             setLoading(true);
-            const response = await fetch(`http://localhost:8080/api/events/update`);
+            const response = await fetch(`http://localhost:8080/api/events/update/${id}`);
             handleResponse(response.status);
         } catch (err) {
             handleResponse(-1);

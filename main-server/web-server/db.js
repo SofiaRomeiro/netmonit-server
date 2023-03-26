@@ -1,11 +1,11 @@
 const Pool = require("pg").Pool;
 
 const pool = new Pool({
-    user: "postgres",
-    password: "postgres",
-    host: "172.10.0.10", // docker container IP address
-    port: 5432,
-    database: "main_db"
+    user: DBUSER,
+    password: DBPASSWORD,
+    host: DOCKER_IP, // docker container IP address
+    port: DBPORT,
+    database: DBNAME
 });
 
 module.exports = pool;
