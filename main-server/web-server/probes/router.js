@@ -65,11 +65,12 @@ router.post(`/registration`, async (req, res) => {
     console.log("Request body: " + util.inspect(req.body, false, null, true))
 
     try {
-        const result = await pool.query('INSERT into raspberry (id_pi, model, location, ip, destination_ping) \
-        VALUES ($1, $2, $3, $4, $5)', [req.body.id, 
+        const result = await pool.query('INSERT into raspberry (id_pi, model, location, ip, interface, destination_ping) \
+        VALUES ($1, $2, $3, $4, $5, $6)', [req.body.id, 
             req.body.model, 
             req.body.location, 
             req.body.ip, 
+            req.body.interface,
             req.body.gateway]
         )
     }
