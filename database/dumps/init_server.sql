@@ -29,23 +29,26 @@ CREATE TABLE events (
     FOREIGN KEY (id_pi) REFERENCES raspberry(id_pi)
 );
 
-CREATE TABLE performance (
-    id_pi VARCHAR(100),
-    creation_date TIMESTAMP,
+CREATE TABLE externalPerformance (
+    creation_date TIMESTAMP WITHOUT TIME ZONE,
     upload_speed INTEGER,
     download_speed INTEGER,
     latency INTEGER,
     bytes_sent INTEGER,
     bytes_received INTEGER,
-    destination_host VARCHAR(200),
-    PRIMARY KEY (id_pi, creation_date),
-    FOREIGN KEY (id_pi) REFERENCES raspberry(id_pi)
+    destination_host VARCHAR(200), 
+    PRIMARY KEY (creation_date)
 );
 
-CREATE OR REPLACE VIEW data AS
-    SELECT * FROM events
-    JOIN raspberry
-    ON raspberry.id_pi = events.id_pi
-    JOIN performance
-    ON performance.id_pi = events.id_pi
-    ORDER BY creation_date DESC;
+CREATE TABLE internalPerformance (
+    creation_date TIMESTAMP WITHOUT TIME ZONE,
+    protocol VARCHAR(10),
+    bytes_sent INTEGER,
+    bytes_received INTEGER,
+    jitter INTEGER,
+    packet_loss INTEGER,    
+    sent_Mbps INTEGER,
+    received_Mbps INTEGER,
+    destination_host VARCHAR(200),
+    PRIMARY KEY (creation_date)
+);

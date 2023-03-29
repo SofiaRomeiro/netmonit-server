@@ -34,11 +34,11 @@ router.post(`/update/monitor`, async(req, res) => {
     res.send("OK!")
 })
 
-router.post(`/update/performance`, async(req, res) => {
+router.post(`/update/performance/external`, async(req, res) => {
     console.log("Request body: " + util.inspect(req.body, false, null, true))
     await req.body.forEach(async log => {
         try {
-            const result = await pool.query('INSERT into performance \
+            const result = await pool.query('INSERT into externalPerformance \
             (id_pi, creation_date, upload_speed, download_speed, latency, \
                 bytes_sent, bytes_received, destination_host)\
                  VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
@@ -49,6 +49,35 @@ router.post(`/update/performance`, async(req, res) => {
                     log.latency,
                     log.bytes_sent,
                     log.bytes_received,
+                    log.destination_host
+                ]
+                )
+            }
+            catch (error) {
+                console.log("Error on insertion: " + error.message)
+            }
+    })
+    
+    res.send("OK!")
+})
+
+router.post(`/update/performance/internal`, async(req, res) => {
+    console.log("Request body: " + util.inspect(req.body, false, null, true))
+    await req.body.forEach(async log => {
+        try {
+            const result = await pool.query('INSERT into internalPerformance \
+            (id_pi, creation_date, protocol, bytes_sent, bytes_received, \
+                jitter, packet_loss, sent_Mbps, received_Mbps, destination_host)\
+                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)',
+                 [log.id_pi, 
+                    log.creation_date, 
+                    log.protocol, 
+                    log.bytes_sent, 
+                    log.bytes_received,
+                    log.jitter,
+                    log.packet_loss,
+                    log.sent_Mbps,
+                    log.received_Mbps,
                     log.destination_host
                 ]
                 )
