@@ -1,11 +1,14 @@
 DROP TABLE IF EXISTS raspberry CASCADE;
 DROP TABLE IF EXISTS events CASCADE;
+DROP TABLE IF EXISTS externalPerformance CASCADE;
+DROP TABLE IF EXISTS internalPerformance CASCADE;
 
 CREATE TABLE raspberry(
     id_pi VARCHAR(100),
     model VARCHAR(100),
     location VARCHAR(100),
     ip VARCHAR(15),
+    interface VARCHAR(20),
     destination_ping VARCHAR(100) NOT NULL,
     PRIMARY KEY (id_pi),
     CONSTRAINT valid_ip_check CHECK (LENGTH(ip) < 16),
@@ -15,7 +18,7 @@ CREATE TABLE raspberry(
 
 CREATE TABLE events (
     id_pi VARCHAR(100),
-    creation_date TIMESTAMP, 
+    creation_date TIMESTAMP WITHOUT TIME ZONE, 
     destination_ping VARCHAR(100) NOT NULL,
     max NUMERIC,
     min NUMERIC,
@@ -30,25 +33,27 @@ CREATE TABLE events (
 );
 
 CREATE TABLE externalPerformance (
+    id_pi VARCHAR(100),
     creation_date TIMESTAMP WITHOUT TIME ZONE,
-    upload_speed INTEGER,
-    download_speed INTEGER,
-    latency INTEGER,
-    bytes_sent INTEGER,
-    bytes_received INTEGER,
+    upload_speed NUMERIC,
+    download_speed NUMERIC,
+    latency NUMERIC,
+    bytes_sent BIGINT,
+    bytes_received BIGINT,
     destination_host VARCHAR(200), 
     PRIMARY KEY (creation_date)
 );
 
 CREATE TABLE internalPerformance (
+    id_pi VARCHAR(100),
     creation_date TIMESTAMP WITHOUT TIME ZONE,
     protocol VARCHAR(10),
-    bytes_sent INTEGER,
-    bytes_received INTEGER,
-    jitter INTEGER,
-    packet_loss INTEGER,    
-    sent_Mbps INTEGER,
-    received_Mbps INTEGER,
+    bytes_sent BIGINT,
+    bytes_received BIGINT,
+    jitter NUMERIC,
+    packet_loss NUMERIC,    
+    sent_Mbps NUMERIC,
+    received_Mbps NUMERIC,
     destination_host VARCHAR(200),
     PRIMARY KEY (creation_date)
 );
