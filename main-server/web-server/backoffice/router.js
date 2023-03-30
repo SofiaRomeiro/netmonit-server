@@ -68,6 +68,31 @@ router.get(`/performance/external/:id_pi`, async(req, res) => {
     }    
 })
 
+router.get(`/performance/internal`, async(req, res) => {
+    console.log("Getting internal performance on API");
+    try {
+        const allEvents = await pool.query("SELECT * FROM internalPerformance");
+        res.send(JSON.stringify(allEvents.rows));
+    }
+    catch (err) {
+        console.log(err.message);
+    }    
+})
+
+
+router.get(`/performance/internal/:id_pi`, async(req, res) => {
+    try {
+        const id_pi = req.params.new_dest_ping
+        const allEvents = await pool.query("SELECT * FROM internalPerformance \
+        JOIN raspberry ON internalPerformance.id_pi = raspberry.id_pi \
+        WHERE id_pi=(%s)", [id_pi]);
+        res.send(JSON.stringify(allEvents.rows));
+    }
+    catch (err) {
+        console.log(err.message);
+    }    
+})
+
 router.get(`/delete-raspberries`, async(req, res) => {
     try {
         const allPies = await pool.query("DELETE FROM raspberry");
