@@ -128,12 +128,12 @@ router.post(`/registration`, async (req, res) => {
             req.body.gateway
             ]
         )  
+        res.status(200);
     }
     catch (err) {
         console.log("Error on insertion: " + err.message + ": " + err.stack);
         res.status(500);
     }
-    res.status(200);
 });
 
 module.exports = router

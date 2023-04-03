@@ -1,21 +1,22 @@
-import React  from 'react';
-import Topbar from "./components/topbar/Topbar";
-import Sidebar from "./components/sidebar/Sidebar";
-import Home from "./pages/home/Home";
 import "./app.css"
+import React  from 'react';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Data from "./pages/data/Data";
+import Topbar from "./components/topbar/Topbar";
+import Grafana from "./pages/grafana/Grafana";
+import Probes from "./pages/probes/Probes";
+import PageSettings from "./pages/PageSettings/PageSettings";
 
 function App() {
   return (
       <Router>
           <Topbar />
-          <div className="container">
-              <Sidebar />
-              <Routes>
-                  <Route exact path='/' element={<Home />} />
-                  <Route exact path='/data' element={<Data />} />
-              </Routes>
+          <div className="welcome-page">
+                <Routes>
+                    <Route exact path='/' element={<Grafana/>} />
+                    <Route exact path='/grafana' element={<Grafana/>} />
+                    <Route exact path='/probes' element={<Probes/>} />
+                    <Route exact path='/settings' element={<PageSettings/>} />
+                </Routes>
           </div>
       </Router>
   );
