@@ -5,6 +5,16 @@ const pool = require("../db");
 const router = express.Router();
 const util = require('util');
 
+function insertion_error(type, err, res) {
+    console.log("Error on insertion: " + err.message);
+    return res.status(500).send('Error on inserting ' + type +': ' + err.message);
+}
+
+function insertion_success(res) {    
+    console.log("[LOG Register] Message Sent!");
+    return res.send('Success on Insertion');
+}
+
 router.post(`/update/monitor`, async(req, res) => {
     console.log("Request body: " + util.inspect(req.body, false, null, true))
     for (i=0; i < req.body.length; i++) {
@@ -27,13 +37,12 @@ router.post(`/update/monitor`, async(req, res) => {
                     log.interface
                 ],
             )
+            return insertion_success(res)
         }
         catch (err) {
-            console.log("Error on insertion: " + err.message + ": " + err.stack);
-            res.status(500);
+            return insertion_error("events", err, res)
         }        
     }
-    res.status(200)
 })
 
 router.post(`/update/performance/external`, async(req, res) => {
@@ -56,13 +65,12 @@ router.post(`/update/performance/external`, async(req, res) => {
                     log.destination_host
                 ]
             )
+            return insertion_success(res)
         }
         catch (err) {
-            console.log("Error on insertion: " + err.message + ": " + err.stack);
-            res.status(500);
+            return insertion_error("external performance", err, res)
         }
     }
-    res.status(200);
 })
 
 router.post(`/update/performance/internal`, async(req, res) => {
@@ -104,13 +112,12 @@ router.post(`/update/performance/internal`, async(req, res) => {
                         log.destination_host
                     ]
                 )
-            }    
+            }   
+            return insertion_success(res) 
         } 
         catch (err) {
-            console.log("Error on insertion: " + err.message + ": " + err.stack);
-            res.status(500);
+            return insertion_error("internal performance", err, res)
         }
-        res.status(200);
     }
 })
 
@@ -128,11 +135,10 @@ router.post(`/registration`, async (req, res) => {
             req.body.gateway
             ]
         )  
-        res.status(200);
+        return insertion_success(res)
     }
     catch (err) {
-        console.log("Error on insertion: " + err.message + ": " + err.stack);
-        res.status(500);
+        return insertion_error("registration", err, res)
     }
 });
 

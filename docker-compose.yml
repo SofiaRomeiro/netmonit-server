@@ -5,6 +5,8 @@ services:
     image: postgres:alpine
     container_name: main_postgres
     command: postgres -c 'max_connections=50'
+    environment:
+      TZ: 'Europe/Lisbon'
     ports:
       - 5432
     restart: unless-stopped
@@ -19,6 +21,8 @@ services:
     build: ./main-server/web-server
     image: netmonit-server
     container_name: server
+    environment:
+      TZ: 'Europe/Lisbon'
     hostname: localhost
     depends_on:
       - main_db
@@ -26,6 +30,26 @@ services:
       - 8080
     restart: unless-stopped
     network_mode: host
+  grafana:
+    image: grafana/grafana
+    container_name: grafana-server
+    restart: always
+    depends_on:
+      - main_db
+    environment:
+      - GF_SECURITY_ADMIN_USER=grafana
+      - GF_SECURITY_ADMIN_PASSWORD=grafanareader
+      - GF_INSTALL_PLUGINS=
+    networks:
+      main_network:
+        ipv4_address: 172.40.0.11
+    ports:
+      - '3000:3000'
+    volumes:
+      - grafana_data:/var/lib/grafana
+  
+volumes:
+  grafana_data: {}
 
 networks:
   main_network:

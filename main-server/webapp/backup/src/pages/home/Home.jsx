@@ -58,6 +58,8 @@ const Home = () => {
             const response = await fetch(`http://localhost:8080/api/raspberries`);
             const jsonData = await response.json();
 
+            console.log(jsonData);
+
             setData(jsonData);
         }  catch (err) {
             console.error(err);

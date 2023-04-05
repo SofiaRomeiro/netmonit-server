@@ -3,6 +3,10 @@ DROP TABLE IF EXISTS events CASCADE;
 DROP TABLE IF EXISTS externalPerformance CASCADE;
 DROP TABLE IF EXISTS internalPerformance CASCADE;
 
+CREATE USER grafana WITH PASSWORD 'grafanareader';
+
+SET TIME ZONE '+0:00';
+
 CREATE TABLE raspberry(
     id_pi VARCHAR(100),
     model VARCHAR(100),
@@ -18,7 +22,7 @@ CREATE TABLE raspberry(
 
 CREATE TABLE events (
     id_pi VARCHAR(100),
-    creation_date TIMESTAMP WITHOUT TIME ZONE, 
+    creation_date TIMESTAMP, 
     destination_ping VARCHAR(100) NOT NULL,
     max NUMERIC,
     min NUMERIC,
@@ -34,7 +38,7 @@ CREATE TABLE events (
 
 CREATE TABLE externalPerformance (
     id_pi VARCHAR(100),
-    creation_date TIMESTAMP WITHOUT TIME ZONE,
+    creation_date TIMESTAMP,
     upload_speed NUMERIC,
     download_speed NUMERIC,
     latency NUMERIC,
@@ -57,3 +61,10 @@ CREATE TABLE internalPerformance (
     destination_host VARCHAR(200),
     PRIMARY KEY (creation_date)
 );
+
+-- GRAFANA PERMISSIONS
+
+GRANT SELECT ON raspberry TO grafana;
+GRANT SELECT ON events TO grafana;
+GRANT SELECT ON internalPerformance TO grafana;
+GRANT SELECT ON externalPerformance TO grafana;
