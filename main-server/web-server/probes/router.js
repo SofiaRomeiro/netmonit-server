@@ -16,7 +16,7 @@ function insertion_success(res) {
 }
 
 router.post(`/update/monitor`, async(req, res) => {
-    console.log("Request body: " + util.inspect(req.body, false, null, true))
+    console.log("[/update/monitor]Request body: " + util.inspect(req.body, false, null, true))
     for (i=0; i < req.body.length; i++) {
         log = req.body[i]
         try {
@@ -46,7 +46,7 @@ router.post(`/update/monitor`, async(req, res) => {
 })
 
 router.post(`/update/performance/external`, async(req, res) => {
-    console.log("Request body: " + util.inspect(req.body, false, null, true))
+    console.log("[/update/performance/external] Request body: " + util.inspect(req.body, false, null, true))
     for (i=0; i < req.body.length; i++) {
         log = req.body[i]
         try {
@@ -122,7 +122,7 @@ router.post(`/update/performance/internal`, async(req, res) => {
 })
 
 router.post(`/registration`, async (req, res) => {
-    console.log("Request body: " + util.inspect(req.body, false, null, true))
+    console.log("[/registration] Request body: " + util.inspect(req.body, false, null, true))
 
     try {
         await pool.query('INSERT into raspberry (id_pi, model, location, ip, interface, destination_ping) \

@@ -46,11 +46,10 @@ services:
     ports:
       - '3000:3000'
     volumes:
-      - grafana_data:/var/lib/grafana
+      - type: bind
+        source: ./grafana/data/dashboard.json
+        target: /var/lib/grafana
   
-volumes:
-  grafana_data: {}
-
 networks:
   main_network:
     ipam:

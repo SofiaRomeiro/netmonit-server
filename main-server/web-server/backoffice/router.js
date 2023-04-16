@@ -93,6 +93,7 @@ router.get(`/performance/internal/:id_pi`, async(req, res) => {
     }    
 })
 
+// TODO change for DELETE and change endpoint 
 router.get(`/delete-raspberries`, async(req, res) => {
     try {
         const allPies = await pool.query("DELETE FROM raspberry");
