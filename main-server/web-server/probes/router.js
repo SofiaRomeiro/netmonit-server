@@ -19,6 +19,7 @@ router.post(`/update/monitor`, async(req, res) => {
     console.log("[/update/monitor]Request body: " + util.inspect(req.body, false, null, true))
     for (i=0; i < req.body.length; i++) {
         log = req.body[i]
+        console.log("[/update/monitor] Log: " + log)
         try {
             await pool.query('INSERT into events \
             (id_pi, creation_date, destination_ping, max, min, avg, packets_sent, packets_received, \
@@ -37,12 +38,12 @@ router.post(`/update/monitor`, async(req, res) => {
                     log.interface
                 ],
             )
-            return insertion_success(res)
         }
         catch (err) {
             return insertion_error("events", err, res)
         }        
     }
+    return insertion_success(res)
 })
 
 router.post(`/update/performance/external`, async(req, res) => {
