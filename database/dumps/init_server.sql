@@ -9,8 +9,9 @@ SET TIME ZONE '+0:00';
 
 CREATE TABLE raspberry(
     id_pi VARCHAR(100),
+    pi_name VARCHAR(100),
     model VARCHAR(100),
-    location VARCHAR(100),
+    pi_location VARCHAR(100),
     ip VARCHAR(15),
     interface VARCHAR(20),
     destination_ping VARCHAR(100) NOT NULL,
