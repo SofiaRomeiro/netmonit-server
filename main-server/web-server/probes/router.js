@@ -79,8 +79,10 @@ router.post(`/update/performance/internal`, async(req, res) => {
 
     for (i=0; i < req.body.length; i++) {
         log = req.body[i]
+        console.log(log.protocol)
+        console.log(log.protocol == "UDP")
         try {
-            if (log.protocol === "UDP") {
+            if (log.protocol == "UDP") {
                 await pool.query('INSERT into internalPerformance \
                     (id_pi, creation_date, protocol, bytes_sent, \
                     jitter, packet_loss, sent_Mbps, destination_host)\
