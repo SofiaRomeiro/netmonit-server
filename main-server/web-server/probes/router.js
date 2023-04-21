@@ -58,8 +58,7 @@ router.post(`/update/monitor`, async(req, res) => {
         catch (error) {
             console.log("Error on insertion: " + error.message)
         }
-    })
-    
+    }    
     res.send("OK!")
 })
 
