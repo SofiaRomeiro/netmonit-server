@@ -34,7 +34,6 @@ router.post(`/update/monitor`, async(req, res) => {
                         log.packets_sent,
                         log.packets_received,
                         log.packet_loss,
-                        log.jitter,
                         log.interface]
                     )
             }
@@ -51,6 +50,7 @@ router.post(`/update/monitor`, async(req, res) => {
                         log.packets_sent,
                         log.packets_received,
                         log.packet_loss,
+                        log.jitter,
                         log.interface]
                     )
             }
