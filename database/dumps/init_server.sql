@@ -30,8 +30,8 @@ CREATE TABLE events (
     avg BIGINT,
     packets_sent INTEGER,
     packets_received INTEGER,
-    packet_loss DECIMAL(4,1),
-    jitter DECIMAL(4,1),
+    packet_loss DECIMAL(8,3),
+    jitter DECIMAL(8,3),
     interface VARCHAR(20),
     PRIMARY KEY (id_pi, creation_date),
     FOREIGN KEY (id_pi) REFERENCES raspberry(id_pi)
