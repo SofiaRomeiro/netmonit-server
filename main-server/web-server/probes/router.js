@@ -19,9 +19,9 @@ router.post(`/update/monitor`, async(req, res) => {
     console.log("[/update/monitor]Request body: " + util.inspect(req.body, false, null, true))
     for (i=0; i < req.body.length; i++) {
         log = req.body[i]
-        console.log("[/update/monitor] Log: " + log)
+        console.log("[/update/monitor] Jitter: " + log.jitter)
         try {
-            if (log.jitter === 'None') {                   
+            if (log.jitter == "None") {                   
                 const result = await pool.query('INSERT into events \
                 (id_pi, creation_date, destination_ping, max, min, avg, packets_sent, packets_received, \
                     packet_loss, jitter, interface) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)',
