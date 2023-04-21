@@ -24,7 +24,7 @@ router.post(`/update/monitor`, async(req, res) => {
             if (log.jitter == "None") {                   
                 const result = await pool.query('INSERT into events \
                 (id_pi, creation_date, destination_ping, max, min, avg, packets_sent, packets_received, \
-                    packet_loss, jitter, interface) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)',
+                    packet_loss, interface) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)',
                     [log.id_pi, 
                         log.creation_date, 
                         log.destination_ip, 
@@ -40,7 +40,7 @@ router.post(`/update/monitor`, async(req, res) => {
             else {
                 const result = await pool.query('INSERT into events \
                 (id_pi, creation_date, destination_ping, max, min, avg, packets_sent, packets_received, \
-                    packet_loss, interface) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)',
+                    packet_loss, jitter, interface) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)',
                     [log.id_pi, 
                         log.creation_date, 
                         log.destination_ip, 
