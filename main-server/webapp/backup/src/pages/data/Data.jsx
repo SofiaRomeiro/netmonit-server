@@ -1,9 +1,7 @@
 import "./data.css"
 import { ethernet, wlan, wwan } from "../../constants/interfaces";
-import version from "../../version.js";
 import React, { useState, useEffect } from "react";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
-import { Chip } from "@mui/material";
 import { green, red, amber } from "@mui/material/colors";
 import WarningIcon from "@material-ui/icons/Warning";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";

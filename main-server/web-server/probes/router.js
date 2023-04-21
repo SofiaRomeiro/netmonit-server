@@ -5,10 +5,21 @@ const pool = require("../db");
 const router = express.Router();
 const util = require('util');
 
-router.post(`/update/monitor`, async(req, res) => {
-    console.log("Request body: " + util.inspect(req.body, false, null, true))
+function insertion_error(type, err, res) {
+    console.log("Error on insertion: " + err.message);
+    return res.status(500).send('Error on inserting ' + type +': ' + err.message);
+}
 
-    await req.body.forEach(async log => {
+function insertion_success(res) {    
+    console.log("[LOG Register] Message Sent!");
+    return res.send('Success on Insertion');
+}
+
+router.post(`/update/monitor`, async(req, res) => {
+    console.log("[/update/monitor]Request body: " + util.inspect(req.body, false, null, true))
+    for (i=0; i < req.body.length; i++) {
+        log = req.body[i]
+        console.log("[/update/monitor] Log: " + log)
         try {
             if (log.jitter === 'None') {                   
                 const result = await pool.query('INSERT into events \
@@ -52,15 +63,17 @@ router.post(`/update/monitor`, async(req, res) => {
     res.send("OK!")
 })
 
-router.post(`/update/performance`, async(req, res) => {
-    console.log("Request body: " + util.inspect(req.body, false, null, true))
-    await req.body.forEach(async log => {
+router.post(`/update/performance/external`, async(req, res) => {
+    console.log("[/update/performance/external] Request body: " + util.inspect(req.body, false, null, true))
+    for (i=0; i < req.body.length; i++) {
+        log = req.body[i]
         try {
-            const result = await pool.query('INSERT into performance \
+            await pool.query('INSERT into externalPerformance \
             (id_pi, creation_date, upload_speed, download_speed, latency, \
                 bytes_sent, bytes_received, destination_host)\
-                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
-                 [log.id_pi, 
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
+                [
+                    log.id_pi, 
                     log.creation_date, 
                     log.upload_speed, 
                     log.download_speed, 
@@ -69,33 +82,85 @@ router.post(`/update/performance`, async(req, res) => {
                     log.bytes_received,
                     log.destination_host
                 ]
+            )
+            return insertion_success(res)
+        }
+        catch (err) {
+            return insertion_error("external performance", err, res)
+        }
+    }
+})
+
+router.post(`/update/performance/internal`, async(req, res) => {
+    console.log("[/update/performance/internal] Request body: " + util.inspect(req.body, false, null, true))
+
+    for (i=0; i < req.body.length; i++) {
+        log = req.body[i]
+        console.log(log.protocol)
+        console.log(log.protocol == "UDP")
+        try {
+            if (log.protocol == "UDP") {
+                await pool.query('INSERT into internalPerformance \
+                    (id_pi, creation_date, protocol, bytes_sent, \
+                    jitter, packet_loss, sent_Mbps, destination_host)\
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
+                    [
+                        log.id_pi, 
+                        log.creation_date, 
+                        log.protocol, 
+                        log.bytes_sent, 
+                        log.jitter,
+                        log.packet_loss,
+                        log.sent_Mbps,
+                        log.destination_host
+                    ]
                 )
-            }
-            catch (error) {
-                console.log("Error on insertion: " + error.message)
-            }
-    })
-    
-    res.send("OK!")
+            } 
+            else {
+                await pool.query('INSERT into internalPerformance \
+                    (id_pi, creation_date, protocol, bytes_sent, bytes_received, \
+                    sent_Mbps, received_Mbps, destination_host)\
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
+                    [
+                        log.id_pi, 
+                        log.creation_date, 
+                        log.protocol, 
+                        log.bytes_sent, 
+                        log.bytes_received,
+                        log.sent_Mbps,
+                        log.received_Mbps,
+                        log.destination_host
+                    ]
+                )
+            }   
+            return insertion_success(res) 
+        } 
+        catch (err) {
+            return insertion_error("internal performance", err, res)
+        }
+    }
 })
 
 router.post(`/registration`, async (req, res) => {
-    console.log("Request body: " + util.inspect(req.body, false, null, true))
+    console.log("[/registration] Request body: " + util.inspect(req.body, false, null, true))
 
     try {
-        const result = await pool.query('INSERT into raspberry (id_pi, model, location, ip, destination_ping) \
-        VALUES ($1, $2, $3, $4, $5)', [req.body.id, 
+        await pool.query('INSERT into raspberry (id_pi, pi_name, model, pi_location, ip, interface, destination_ping) \
+        VALUES ($1, $2, $3, $4, $5, $6, $7)', 
+            [req.body.id, 
+            req.body.name,
             req.body.model, 
             req.body.location, 
             req.body.ip, 
-            req.body.gateway]
-        )
+            req.body.interface,
+            req.body.gateway
+            ]
+        )  
+        return insertion_success(res)
     }
-    catch (error) {
-        console.log("Error on insertion: " + error.message)
+    catch (err) {
+        return insertion_error("registration", err, res)
     }
-
-    res.send("Request received and ok!")
 });
 
 module.exports = router

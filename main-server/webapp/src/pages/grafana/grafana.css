@@ -1,0 +1,36 @@
+.grafana-dashboard {
+    background-color: #181b1f;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    height: 100%;
+}
+
+.dashboard {
+    grid-column: 1 / 5;
+    grid-row: 1;
+}
+
+.more-btn {
+    grid-column: 4;
+    grid-row: 1;
+    display: flex;
+    align-items: flex-end;
+    width: 80%;
+    margin-left: 10%;
+}
+
+.grafana-button {
+    background-color: rgb(65, 65, 65);
+    color: white;
+    border-radius: 5pt;
+    width: 20vh;
+    height: 5vh;
+    margin-bottom: 35%;
+    font-size: 3vh;
+}
+
+
+
+.body {
+    margin: 0;
+}

@@ -1,5 +1,4 @@
-import "./home.css"
-import { selectInterface, getChipProps, getDate, getTime } from "../data/Data";
+import "./probes.css"
 import React, { useState, useEffect } from "react";
 import { DataGrid, GridToolbar, GridActionsCellItem } from "@mui/x-data-grid";
 import TextField from '@mui/material/TextField';
@@ -10,25 +9,24 @@ import MuiAlert from '@mui/material/Alert';
 import Snackbar from "@mui/material/Snackbar";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
-import { Button, Chip, Paper } from "@mui/material";
+import { Button, Chip, Paper, autocompleteClasses } from "@mui/material";
 
-const Home = () => {
+const Probes = () => {
+
     const Alert = React.forwardRef(function Alert(props, ref) {
         return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-      });
+    })
 
     const [open, setOpen] = useState(false);
     const [severity, setSeverity] = useState('');
     const [loading, setLoading] = useState(false);
-    const [data, setData]  = useState([]);
+    const [probes, setProbes]  = useState([]);
     const [message, setMessage] = useState('');
     const [showDeviceList, setShowDeviceList] = useState(false);
     const [deviceData, setDeviceData] = useState([]);
-
     const [showInputPage, setShowInputPage] = useState(false);
     const [dest, setDest] = useState('');
     const [targetIP, setTargetIP] = useState('');
-
 
     const handleClose = (event, reason) => {
         if (reason === 'clickaway') {
@@ -42,6 +40,31 @@ const Home = () => {
         setDest(event.target.value);
     };
 
+    // Probes Info and Settings
+    const getProbes = async () => {
+        try {
+            const response = await fetch(`http://localhost:8080/api/raspberries`);
+            const jsonProbes = await response.json();
+
+            setProbes(jsonProbes);
+        }  catch (err) {
+            console.error(err);
+        }
+    };
+
+    useEffect(() => {
+        getProbes();
+    }, []);
+
+    const showProbes = (id) => {
+        setShowDeviceList(true);
+    };
+
+    const changeDestIP = (targetIP) => {
+        setTargetIP(targetIP);
+        setShowInputPage(true);
+    };
+
     const handleResponse = (status) => {
         if (status === 200) {
             setSeverity('success');
@@ -53,15 +76,18 @@ const Home = () => {
         }
     };
 
-    const getData = async () => {
-        try {
-            const response = await fetch(`http://localhost:8080/api/raspberries`);
-            const jsonData = await response.json();
-
-            setData(jsonData);
-        }  catch (err) {
+    const sendUpdateDestinationRequest = async (new_ip) => {
+        try{
+            setShowInputPage(false);
+            setLoading(true);
+            const response = await fetch(`http://localhost:8080/api/update-dest-ping/${new_ip}`);
+            handleResponse(response.status);
+        } catch (err) {
+            handleResponse(-1);
             console.error(err);
         }
+        setLoading(false);
+        setOpen(true);
     };
 
     const updateEvents = async (id) => {
@@ -77,54 +103,12 @@ const Home = () => {
         setOpen(true);
     };
 
-
-    useEffect(() => {
-        getData();
-    }, []);
-
-    const getDeviceData = async (id) => {
-        try {
-            const response = await fetch(`http://localhost:8080/api/raspberries/${id}`);
-            const jsonData = await response.json();
-
-            console.log("Response: " + jsonData)
-
-            setDeviceData(jsonData);
-        }  catch (err) {
-            console.error(err);
-        }
-    };
-
-    const showData = (id) => {
-        setShowDeviceList(true);
-        getDeviceData(id);
-    };
-
-    const changeDestPing = (targetIP) => {
-        setTargetIP(targetIP);
-        setShowInputPage(true);
-    }
-
-    const sendUpdateDestinationRequest = async (new_dest) => {
-        try{
-            setShowInputPage(false);
-            setLoading(true);
-            const response = await fetch(`http://localhost:8080/api/update-dest-ping/${new_dest}`);
-            handleResponse(response.status);
-        } catch (err) {
-            handleResponse(-1);
-            console.error(err);
-        }
-        setLoading(false);
-        setOpen(true);
-    };
-
     const columns = [
-        {field: 'id_pi', headerName: 'ID', headerAlign: 'center', align: 'center', width: 200},
-        {field: 'ip', headerName: 'IP Address', headerAlign: 'center', align: 'center', width: 100},
-        {field: 'model', headerName: 'Model', headerAlign: 'center', align: 'center', width: 80},
-        {field: 'location', headerName: 'Location', headerAlign: 'center',align: 'center',  width: 80},
-        {field: 'destination_ping', headerName: 'Dest. Address', headerAlign: 'center', align: 'center', maxWidth: 200, flex: 1},
+        {field: 'id_pi', headerName: 'ID', headerAlign: 'center', align: 'center', flex: 1},
+        {field: 'ip', headerName: 'IP Address', headerAlign: 'center', align: 'center', flex: 1},
+        {field: 'model', headerName: 'Model', headerAlign: 'center', align: 'center', flex: 1},
+        {field: 'location', headerName: 'Location', headerAlign: 'center',align: 'center',  flex: 1},
+        {field: 'destination_ping', headerName: 'Ping Dest. Address', headerAlign: 'center', align: 'center', maxWidth: 200, flex: 1},
         {
             field: 'update',
             type: 'actions',
@@ -139,7 +123,7 @@ const Home = () => {
                 />
             ]
         },
-        {
+        /*{
             field: 'list',
             type: 'actions',
             headerName: 'List Data',
@@ -152,79 +136,69 @@ const Home = () => {
                 sx={{color: 'black'}}
                 />
             ]
-        },
+        },*/
         {
             field: 'update_dest_ping',
             type: 'actions',
-            headerName: 'Set Dest. Address',
-            width: 180,
+            headerName: 'Change Ping Dest. Address',
+            flex: 1,
             getActions: (params) => [
                 <GridActionsCellItem
                 icon={<GpsFixedIcon />}
                 label="Destination"
-                onClick={ () => changeDestPing(params.row.ip) }
+                onClick={ () => changeDestIP(params.row.ip) }
                 sx={{color: 'black'}}
                 />
             ]
         },
     ];
 
-    const deviceDataColumns = [
-        {field: 'id_pi', headerName: 'ID', headerAlign: 'center', width: 100},
-        {field: 'location', headerName: 'Location', headerAlign: 'center', width: 100},
-        {field: 'max', headerName: 'Max', type: 'number', headerAlign: 'center', width: 80},
-        {field: 'min', headerName: 'Min', type: 'number', headerAlign: 'center', width: 80},
-        {field: 'avg', headerName: 'Avg', type: 'number', headerAlign: 'center', width: 80},
-        {field: 'packets_sent', headerName: 'Sent', type: 'number', headerAlign: 'center', width: 80},
-        {field: 'packets_received', headerName: 'Received', type: 'number', headerAlign: 'center', width: 80},
-        {
-            field: 'packet_loss', 
-            headerName: 'Packet Loss', 
-            type: 'number', 
-            headerAlign: 'center', 
-            width: 120,
-            valueFormatter: (params) => {
-                return `${params.value} %`;
-            }
-        },
-        {field: 'creation_date', headerName: 'Date', type: 'date', headerAlign: 'center', width: 120, valueGetter: getDate},
-        {field: 'creation_date', headerName: 'Time', headerAlign: 'center', width: 120},
-        {field: 'ip', headerName: 'IP Address', headerAlign: 'center', width: 100},
-        {field: 'interface', headerName: 'Interface', headerAlign: 'center', align: 'center', width: 75, renderCell: (params) => {
-            return selectInterface(params)
-        }},
-        {field: 'connection_status', headerName: 'Connection Status', headerAlign: 'center', width: 180, renderCell: (params) => {
-            return <Chip variant="outlined" {... getChipProps(params)}/>
-        }}
-    ];
-
     return (
-        <div className="home">
+        <div className="probes">
             <DataGrid
-                rows={data}
+                autoHeight
+                rows={probes}
                 columns={columns}
                 id="_id"
                 components={{Toolbar: GridToolbar}}
                 getRowId={(row) => (row.id_pi + row.creation_date) }
+                sx={{ 
+                    '& .css-1knaqv7-MuiButtonBase-root-MuiButton-root': {
+                        color: '#343434',
+                    },
+                    '& .css-1j9kmqg-MuiDataGrid-toolbarContainer': {
+                        marginLeft: 'auto',
+                        marginRight: 0
+                    },
+                    '& .MuiDataGrid-columnHeader': {
+                        fontSize: '1vw',
+                    },
+                    '& .MuiDataGrid-cell': {
+                        fontSize: '1vw',
+                    }
+                }}
             />
+
             <Snackbar anchorOrigin={{vertical:'top', horizontal:'center'}} open={open} autoHideDuration={6000} onClose={handleClose}>
                 <Alert onClose={handleClose} severity={severity} sx={{ width: '100%' }}>
-                     {message}
+                    {message}
                 </Alert>
             </Snackbar>
+
             <Backdrop // backdrop for the update button
                 sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
                 open={loading}
             >
                 <CircularProgress color="inherit" />
             </Backdrop>
-            <Backdrop // backdrop for the device datagrid
+    
+            {/*<Backdrop // backdrop for the device datagrid
                 sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1, padding: '30px', verticalAlign: 'middle'}}
                 open={showDeviceList}
             >
                 <DataGrid
                     rows={deviceData}
-                    columns={deviceDataColumns}
+                    columns={deviceData}
                     id="_id"
                     components={{Toolbar: GridToolbar}}
                     getRowId={(row) => ((row.id_pi + row.creation_date)) }
@@ -243,7 +217,7 @@ const Home = () => {
                     setDeviceData([])
                 }
                 }>Close</Button>
-            </Backdrop>
+            </Backdrop>*/}
             <Backdrop
                 open={showInputPage}
             >
@@ -274,4 +248,4 @@ const Home = () => {
     );
 };
 
-export default Home;
+export default Probes;

@@ -1,11 +1,19 @@
 DROP TABLE IF EXISTS raspberry CASCADE;
 DROP TABLE IF EXISTS events CASCADE;
+DROP TABLE IF EXISTS externalPerformance CASCADE;
+DROP TABLE IF EXISTS internalPerformance CASCADE;
+
+CREATE USER grafana WITH PASSWORD 'grafanareader';
+
+SET TIME ZONE '+0:00';
 
 CREATE TABLE raspberry(
     id_pi VARCHAR(100),
+    pi_name VARCHAR(100),
     model VARCHAR(100),
-    location VARCHAR(100),
+    pi_location VARCHAR(100),
     ip VARCHAR(15),
+    interface VARCHAR(20),
     destination_ping VARCHAR(100) NOT NULL,
     PRIMARY KEY (id_pi),
     CONSTRAINT valid_ip_check CHECK (LENGTH(ip) < 16),
@@ -17,35 +25,47 @@ CREATE TABLE events (
     id_pi VARCHAR(100),
     creation_date TIMESTAMP, 
     destination_ping VARCHAR(100) NOT NULL,
-    max NUMERIC,
-    min NUMERIC,
-    avg NUMERIC,
+    max BIGINT,
+    min BIGINT,
+    avg BIGINT,
     packets_sent INTEGER,
     packets_received INTEGER,
-    packet_loss DECIMAL(4,1),
-    jitter DECIMAL(4,1),
+    packet_loss DECIMAL(8,3),
+    jitter DECIMAL(8,3),
     interface VARCHAR(20),
     PRIMARY KEY (id_pi, creation_date),
     FOREIGN KEY (id_pi) REFERENCES raspberry(id_pi)
 );
 
-CREATE TABLE performance (
+CREATE TABLE externalPerformance (
     id_pi VARCHAR(100),
     creation_date TIMESTAMP,
-    upload_speed INTEGER,
-    download_speed INTEGER,
-    latency INTEGER,
-    bytes_sent INTEGER,
-    bytes_received INTEGER,
-    destination_host VARCHAR(200),
-    PRIMARY KEY (id_pi, creation_date),
-    FOREIGN KEY (id_pi) REFERENCES raspberry(id_pi)
+    upload_speed BIGINT,
+    download_speed BIGINT,
+    latency BIGINT,
+    bytes_sent BIGINT,
+    bytes_received BIGINT,
+    destination_host VARCHAR(200), 
+    PRIMARY KEY (creation_date)
 );
 
-CREATE OR REPLACE VIEW data AS
-    SELECT * FROM events
-    JOIN raspberry
-    ON raspberry.id_pi = events.id_pi
-    JOIN performance
-    ON performance.id_pi = events.id_pi
-    ORDER BY creation_date DESC;
+CREATE TABLE internalPerformance (
+    id_pi VARCHAR(100),
+    creation_date TIMESTAMP WITHOUT TIME ZONE,
+    protocol VARCHAR(10),
+    bytes_sent BIGINT,
+    bytes_received BIGINT,
+    jitter BIGINT,
+    packet_loss BIGINT,    
+    sent_Mbps BIGINT,
+    received_Mbps BIGINT,
+    destination_host VARCHAR(200),
+    PRIMARY KEY (creation_date)
+);
+
+-- GRAFANA PERMISSIONS
+
+GRANT SELECT ON raspberry TO grafana;
+GRANT SELECT ON events TO grafana;
+GRANT SELECT ON internalPerformance TO grafana;
+GRANT SELECT ON externalPerformance TO grafana;

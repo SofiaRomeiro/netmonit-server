@@ -43,10 +43,10 @@ router.get(`/events`, async(req, res) => {
     }    
 })
 
-router.get(`/performance`, async(req, res) => {
-    console.log("Getting performance on API");
+router.get(`/performance/external`, async(req, res) => {
+    console.log("Getting external performance on API");
     try {
-        const allEvents = await pool.query("SELECT * FROM performance");
+        const allEvents = await pool.query("SELECT * FROM externalPerformance");
         res.send(JSON.stringify(allEvents.rows));
     }
     catch (err) {
@@ -55,11 +55,11 @@ router.get(`/performance`, async(req, res) => {
 })
 
 
-router.get(`/performance/:id_pi`, async(req, res) => {
+router.get(`/performance/external/:id_pi`, async(req, res) => {
     try {
         const id_pi = req.params.new_dest_ping
-        const allEvents = await pool.query("SELECT * FROM performance \
-        JOIN raspberry ON performance.id_pi = raspberry.id_pi \
+        const allEvents = await pool.query("SELECT * FROM externalPerformance \
+        JOIN raspberry ON externalPerformance.id_pi = raspberry.id_pi \
         WHERE id_pi=(%s)", [id_pi]);
         res.send(JSON.stringify(allEvents.rows));
     }
@@ -68,6 +68,32 @@ router.get(`/performance/:id_pi`, async(req, res) => {
     }    
 })
 
+router.get(`/performance/internal`, async(req, res) => {
+    console.log("Getting internal performance on API");
+    try {
+        const allEvents = await pool.query("SELECT * FROM internalPerformance");
+        res.send(JSON.stringify(allEvents.rows));
+    }
+    catch (err) {
+        console.log(err.message);
+    }    
+})
+
+
+router.get(`/performance/internal/:id_pi`, async(req, res) => {
+    try {
+        const id_pi = req.params.new_dest_ping
+        const allEvents = await pool.query("SELECT * FROM internalPerformance \
+        JOIN raspberry ON internalPerformance.id_pi = raspberry.id_pi \
+        WHERE id_pi=(%s)", [id_pi]);
+        res.send(JSON.stringify(allEvents.rows));
+    }
+    catch (err) {
+        console.log(err.message);
+    }    
+})
+
+// TODO change for DELETE and change endpoint 
 router.get(`/delete-raspberries`, async(req, res) => {
     try {
         const allPies = await pool.query("DELETE FROM raspberry");
