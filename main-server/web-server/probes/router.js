@@ -10,25 +10,43 @@ router.post(`/update/monitor`, async(req, res) => {
 
     await req.body.forEach(async log => {
         try {
-            const result = await pool.query('INSERT into events \
-            (id_pi, creation_date, destination_ping, max, min, avg, packets_sent, packets_received, \
-                packet_loss, jitter, interface) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)',
-                 [log.id_pi, 
-                    log.creation_date, 
-                    log.destination_ip, 
-                    log.max, 
-                    log.min,
-                    log.avg,
-                    log.packets_sent,
-                    log.packets_received,
-                    log.packet_loss,
-                    log.jitter,
-                    log.interface]
-                )
+            if (log.jitter === 'None') {                   
+                const result = await pool.query('INSERT into events \
+                (id_pi, creation_date, destination_ping, max, min, avg, packets_sent, packets_received, \
+                    packet_loss, jitter, interface) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)',
+                    [log.id_pi, 
+                        log.creation_date, 
+                        log.destination_ip, 
+                        log.max, 
+                        log.min,
+                        log.avg,
+                        log.packets_sent,
+                        log.packets_received,
+                        log.packet_loss,
+                        log.jitter,
+                        log.interface]
+                    )
             }
-            catch (error) {
-                console.log("Error on insertion: " + error.message)
+            else {
+                const result = await pool.query('INSERT into events \
+                (id_pi, creation_date, destination_ping, max, min, avg, packets_sent, packets_received, \
+                    packet_loss, interface) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)',
+                    [log.id_pi, 
+                        log.creation_date, 
+                        log.destination_ip, 
+                        log.max, 
+                        log.min,
+                        log.avg,
+                        log.packets_sent,
+                        log.packets_received,
+                        log.packet_loss,
+                        log.interface]
+                    )
             }
+        }
+        catch (error) {
+            console.log("Error on insertion: " + error.message)
+        }
     })
     
     res.send("OK!")
