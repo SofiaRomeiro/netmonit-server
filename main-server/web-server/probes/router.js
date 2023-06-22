@@ -140,6 +140,34 @@ router.post(`/update/performance/internal`, async(req, res) => {
     }
 })
 
+router.post(`/update/wifitest`, async(req, res) => {
+    console.log("[/update/wifitest] Request body: " + util.inspect(req.body, false, null, true))
+    for (i=0; i < req.body.length; i++) {
+        log = req.body[i]
+        try {
+            await pool.query('INSERT into wifiTest \
+            (id_pi, creation_date, channel, frequency, quality, \
+                signal_level, encryption_mode, essid)\
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
+                [
+                    log.id_pi, 
+                    log.creation_date, 
+                    log.channel, 
+                    log.frequency, 
+                    log.quality,
+                    log.signal_level,
+                    log.encryption_mode,
+                    log.essid
+                ]
+            )
+            return insertion_success(res)
+        }
+        catch (err) {
+            return insertion_error("Wifi Test", err, res)
+        }
+    }
+})
+
 router.post(`/registration`, async (req, res) => {
     console.log("[/registration] Request body: " + util.inspect(req.body, false, null, true))
 
