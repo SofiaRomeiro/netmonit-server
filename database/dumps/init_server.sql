@@ -51,7 +51,7 @@ CREATE TABLE externalPerformance (
 
 CREATE TABLE internalPerformance (
     id_pi VARCHAR(100),
-    creation_date TIMESTAMP WITHOUT TIME ZONE,
+    creation_date TIMESTAMP,
     protocol VARCHAR(10),
     bytes_sent BIGINT,
     bytes_received BIGINT,
@@ -63,9 +63,23 @@ CREATE TABLE internalPerformance (
     PRIMARY KEY (creation_date)
 );
 
+CREATE TABLE wifiTest (
+    id_pi VARCHAR(100),
+    creation_date TIMESTAMP,
+    ap VARCHAR(100) NOT NULL,
+    channel BIGINT,
+    frequency BIGINT,
+    quality VARCHAR(20),
+    signal_level VARCHAR(20),
+    encryption_mode VARCHAR(20),
+    essid VARCHAR(100),
+    PRIMARY KEY (creation_date)
+);
+
 -- GRAFANA PERMISSIONS
 
 GRANT SELECT ON raspberry TO grafana;
 GRANT SELECT ON events TO grafana;
 GRANT SELECT ON internalPerformance TO grafana;
 GRANT SELECT ON externalPerformance TO grafana;
+GRANT SELECT ON wifiTest TO grafana;
