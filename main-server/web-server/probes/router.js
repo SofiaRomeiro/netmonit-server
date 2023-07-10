@@ -163,12 +163,12 @@ router.post(`/update/wifitest`, async(req, res) => {
                     log.essid
                 ]
             )
-            return insertion_success(res)
         }
         catch (err) {
             return insertion_error("Wifi Test", err, res)
         }
     }
+    return insertion_success(res)
 })
 
 router.post(`/registration`, async (req, res) => {
