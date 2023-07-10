@@ -146,12 +146,13 @@ router.post(`/update/wifitest`, async(req, res) => {
         log = req.body[i]
         try {
             await pool.query('INSERT into wifiTest \
-            (id_pi, creation_date, channel, frequency, quality, \
+            (id_pi, creation_date, ap, channel, frequency, quality, \
                 signal_level, encryption_mode, essid)\
-                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)',
                 [
                     log.id_pi, 
                     log.creation_date, 
+                    log.ap,
                     log.channel, 
                     log.frequency, 
                     log.quality,
