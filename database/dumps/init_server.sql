@@ -73,7 +73,7 @@ CREATE TABLE wifiTest (
     signal_level VARCHAR(20),
     encryption_mode VARCHAR(20),
     essid VARCHAR(100),
-    PRIMARY KEY (creation_date)
+    PRIMARY KEY (creation_date, ap)
 );
 
 -- GRAFANA PERMISSIONS
