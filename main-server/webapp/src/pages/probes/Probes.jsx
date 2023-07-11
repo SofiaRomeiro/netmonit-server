@@ -104,10 +104,11 @@ const Probes = () => {
     };
 
     const columns = [
+        {field: 'pi_name', headerName: 'Name', headerAlign: 'center', align: 'center', flex: 1},
         {field: 'id_pi', headerName: 'ID', headerAlign: 'center', align: 'center', flex: 1},
         {field: 'ip', headerName: 'IP Address', headerAlign: 'center', align: 'center', flex: 1},
         {field: 'model', headerName: 'Model', headerAlign: 'center', align: 'center', flex: 1},
-        {field: 'location', headerName: 'Location', headerAlign: 'center',align: 'center',  flex: 1},
+        {field: 'pi_location', headerName: 'Location', headerAlign: 'center',align: 'center',  flex: 1},
         {field: 'destination_ping', headerName: 'Ping Dest. Address', headerAlign: 'center', align: 'center', maxWidth: 200, flex: 1},
         {
             field: 'update',
@@ -118,25 +119,11 @@ const Probes = () => {
                 <GridActionsCellItem
                 icon={<UpdateIcon />}
                 label="Update"
-                onClick={ () => updateEvents(params.row.ip)}
+                onClick={ () => updateEvents(params.row.id_pi)}
                 sx={{color: 'black'}}
                 />
             ]
         },
-        /*{
-            field: 'list',
-            type: 'actions',
-            headerName: 'List Data',
-            width: 100,
-            getActions: (params) => [
-                <GridActionsCellItem
-                icon={<ListIcon />}
-                label="List"
-                onClick={ () => showData(params.row.id_pi)}
-                sx={{color: 'black'}}
-                />
-            ]
-        },*/
         {
             field: 'update_dest_ping',
             type: 'actions',
