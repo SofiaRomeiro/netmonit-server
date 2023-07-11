@@ -31,9 +31,13 @@ services:
     restart: unless-stopped
     network_mode: host
   grafana:
+    user: "0"
     image: grafana/grafana
     container_name: grafana-server
     restart: always
+    volumes:
+      - /docker_data/grafana_data:/var/lib/grafana
+      - /docker_data/certs:/certs
     depends_on:
       - main_db
     environment:
@@ -45,10 +49,6 @@ services:
         ipv4_address: 172.40.0.11
     ports:
       - '3000:3000'
-    volumes:
-      - type: bind
-        source: ./grafana/data/dashboard.json
-        target: /var/lib/grafana
   
 networks:
   main_network:

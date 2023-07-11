@@ -142,10 +142,8 @@ router.post(`/update/performance/internal`, async(req, res) => {
 
 router.post(`/update/wifitest`, async(req, res) => {
     console.log("[/update/wifitest] Request body: " + util.inspect(req.body, false, null, true))
-    console.log(req.body.length)
     for (i=0; i < req.body.length; i++) {
         log = req.body[i]
-        console.log("Inserting...")
         try {
             await pool.query('INSERT into wifiTest \
             (id_pi, creation_date, ap, channel, frequency, quality, \
