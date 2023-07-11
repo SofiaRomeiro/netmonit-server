@@ -15,32 +15,32 @@ app.use(cors({
 }));
 app.use(express.static('../webapp/build'));
 
-app.get(`/${version}/facts`, async (req, res) => {
-    try {
-        const allFacts = await pool.query("SELECT * FROM data");
-        res.send(JSON.stringify(allFacts.rows));
-    } catch (err) {
-        console.log(err.message);
-    }
-});
+// app.get(`/${version}/facts`, async (req, res) => {
+//     try {
+//         const allFacts = await pool.query("SELECT * FROM data");
+//         res.send(JSON.stringify(allFacts.rows));
+//     } catch (err) {
+//         console.log(err.message);
+//     }
+// });
 
-app.get(`/${version}/devices`, async (req, res) => {
-    try {
-        const allFacts = await pool.query("SELECT * FROM raspberry NATURAL JOIN last_updated NATURAL JOIN d_date");
-        res.send(JSON.stringify(allFacts.rows));
-    } catch (err) {
-        console.log(err.message);
-    }
-});
+// app.get(`/${version}/devices`, async (req, res) => {
+//     try {
+//         const allFacts = await pool.query("SELECT * FROM raspberry NATURAL JOIN last_updated NATURAL JOIN d_date");
+//         res.send(JSON.stringify(allFacts.rows));
+//     } catch (err) {
+//         console.log(err.message);
+//     }
+// });
 
-app.get(`/${version}/facts/:device_id`, async (req, res) => {
-    try {
-        const allFacts = await pool.query(`SELECT * FROM data WHERE id_pi = '${req.params.device_id}'`);
-        res.send(JSON.stringify(allFacts.rows));
-    } catch (err) {
-        console.log(err.message);
-    }
-});
+// app.get(`/${version}/facts/:device_id`, async (req, res) => {
+//     try {
+//         const allFacts = await pool.query(`SELECT * FROM data WHERE id_pi = '${req.params.device_id}'`);
+//         res.send(JSON.stringify(allFacts.rows));
+//     } catch (err) {
+//         console.log(err.message);
+//     }
+// });
 
 // =================================== MY CODE BELOW ================================================
 
@@ -49,6 +49,10 @@ app.use('/api/probes', probes)
 
 const backoffice = require('./backoffice/router')
 app.use('/api', backoffice)
+
+app.get('/', (req, res) => {
+    res.send('Welcome to Web Server!')
+  })
 
 app.listen(8080, () => {
     console.log("Server started on port 8080");
